@@ -1,7 +1,8 @@
 const server = require('express')();
+const got = require('got');
 const { register, Gauge, collectDefaultMetrics } = require('prom-client');
 
-const got = require('got');
+const pkg = require('./package.json');
 
 async function collect() {
   try {
@@ -16,34 +17,42 @@ async function collect() {
   }
 }
 
-const prefix = 'ethplorer_account_';
-const ethBalanceGauge = new Gauge({ name: `${prefix}eth_balance`, help: 'Total balance of either in account', labelNames: ['address'] });
-const ethTotalInGauge = new Gauge({ name: `${prefix}eth_totalIn`, help: 'Total either transferred into account', labelNames: ['address'] });
-const ethTotalOutGauge = new Gauge({ name: `${prefix}eth_totalOut`, help: 'Total either transferred out of account', labelNames: ['address'] });
-const txnTotalGauge = new Gauge({ name: `${prefix}txn_total`, help: 'Total number of transactons for account', labelNames: ['address'] });
+const ethBalanceGauge = gauge('eth_balance', 'Total balance of either in account');
+const ethTotalInGauge = gauge('eth_totalIn', 'Total either transferred into account');
+const ethTotalOutGauge = gauge('eth_totalOut', 'Total either transferred out of account');
+const txnTotalGauge = gauge('txn_total', 'Total number of transactons for account');
+const tokenBalanceGauge = gauge('token_balance', 'Overall token balance for account');
 
-function ethMetrics(response) {
-  const { address, ETH, countTxs } = response.body;
+function gauge(name, help) {
+  return new Gauge({ name: `ethplorer_account_${name}`, help: help, labelNames: ['address'] })
+}
+
+function accountMetrics(response) {
+  const { address, ETH, countTxs, tokens } = response.body;
 
   ethBalanceGauge.set({ address: address }, ETH.balance);
   ethTotalInGauge.set({ address: address }, ETH.totalIn);
   ethTotalOutGauge.set({ address: address }, ETH.totalOut);
   txnTotalGauge.set({ address: address }, countTxs);
+  tokenBalanceGauge.set({ address: address }, tokens.reduce(tokenBalanceReducer, 0));
+}
 
-  console.log(JSON.stringify(ethTotalOutGauge.get()));
+function tokenBalanceReducer (acc, token) {
+  return acc += token.tokenInfo.price
+    ? (Number(token.balance) * token.tokenInfo.price.rate) / Number(`1e${token.tokenInfo.decimals}`)
+    : 0;
 }
 
 server.get('/metrics', (req, res) => {
   collect().then((response) => {
-    ethMetrics(response);
+    accountMetrics(response);
     res.set('Content-Type', register.contentType);
     res.end(register.metrics());
-  });
+  }).catch(console.log);
 });
 
-// Enable collection of default metrics
 collectDefaultMetrics();
-// console.log(collectDefaultMetrics.metricsList);
 
-console.log('Server listening to 3000, metrics exposed on /metrics endpoint');
-server.listen(3000);
+const port = 3000;
+console.log(`Server listening to ${port}, metrics exposed on /metrics endpoint`);
+server.listen(port);
