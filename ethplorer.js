@@ -21,7 +21,7 @@ const ethBalanceGauge = gauge('eth_balance', 'Total balance of either in account
 const ethTotalInGauge = gauge('eth_totalIn', 'Total either transferred into account');
 const ethTotalOutGauge = gauge('eth_totalOut', 'Total either transferred out of account');
 const txnTotalGauge = gauge('txn_total', 'Total number of transactons for account');
-const tokenBalanceGauge = gauge('token_balance', 'Overall token balance for account');
+const tokenBalanceGauge = gauge('token_balance_usd', 'Overall token balance for account');
 
 function gauge(name, help) {
   return new Gauge({ name: `ethplorer_account_${name}`, help: help, labelNames: ['address'] })
