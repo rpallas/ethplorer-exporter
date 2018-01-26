@@ -26,6 +26,8 @@ services:
     volumes:
       - ./init.sh:/opt/init.sh
   ethplorer-exporter:
-    # image: rpallas/ethplorer-exporter:latest
-    build: ../
+    image: rpallas/ethplorer-exporter:latest
+    # build: ../
+  coinmarketcap-exporter:
+    image: rpallas/coinmarketcap-exporter:latest
 
