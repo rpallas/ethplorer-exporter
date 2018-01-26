@@ -5,7 +5,11 @@ const got = require('got');
 
 async function collect() {
   try {
-    const response = await got('https://api.ethplorer.io/getAddressInfo/0xCa5b4dDA6CF6Ef6b76F289a3aD228b31B327e05d?apiKey=freekey', { json: true });
+    options = {
+      json: true,
+      headers: { 'user-agent': `ethplorer-exporter/${pkg.version}` }
+    };
+    const response = await got('https://api.ethplorer.io/getAddressInfo/0xCa5b4dDA6CF6Ef6b76F289a3aD228b31B327e05d?apiKey=freekey', options);
     return response;
   } catch (error) {
     console.log(`Error: ${error}`);
