@@ -19,7 +19,7 @@ docker run --rm -p 127.0.0.1:9101:9101 ethplorer-exporter:latest
 - Run it interactively:
 
 ```
-docker run --rm -it --entrypoint=/bin/bash -p 127.0.0.1:9101:9101 -v ${PWD}:/opt/ethplorer-exporter ethplorer-exporter:latest
+docker run --rm -it --entrypoint=/bin/bash -p 127.0.0.1:9101:9101 -v ${PWD}:/usr/src/app ethplorer-exporter:latest
 ```
 
 - Then to launch:
