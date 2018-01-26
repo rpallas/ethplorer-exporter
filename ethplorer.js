@@ -3,6 +3,7 @@ const got = require('got');
 const { register, Gauge, collectDefaultMetrics } = require('prom-client');
 
 const pkg = require('./package.json');
+const address = process.env.ETHPLORER_EXPORTER_ADDRESS || '';
 
 async function collect() {
   try {
@@ -10,7 +11,7 @@ async function collect() {
       json: true,
       headers: { 'user-agent': `ethplorer-exporter/${pkg.version}` }
     };
-    const response = await got('https://api.ethplorer.io/getAddressInfo/0xCa5b4dDA6CF6Ef6b76F289a3aD228b31B327e05d?apiKey=freekey', options);
+    const response = await got(`https://api.ethplorer.io/getAddressInfo/${address}?apiKey=freekey`, options);
     return response;
   } catch (error) {
     console.log(`Error: ${error}`);
