@@ -20,13 +20,15 @@ const prefix = 'ethplorer_account_';
 const ethBalanceGauge = new Gauge({ name: `${prefix}eth_balance`, help: 'Total balance of either in account', labelNames: ['address'] });
 const ethTotalInGauge = new Gauge({ name: `${prefix}eth_totalIn`, help: 'Total either transferred into account', labelNames: ['address'] });
 const ethTotalOutGauge = new Gauge({ name: `${prefix}eth_totalOut`, help: 'Total either transferred out of account', labelNames: ['address'] });
+const txnTotalGauge = new Gauge({ name: `${prefix}txn_total`, help: 'Total number of transactons for account', labelNames: ['address'] });
 
 function ethMetrics(response) {
-  const { address, ETH } = response.body;
+  const { address, ETH, countTxs } = response.body;
 
   ethBalanceGauge.set({ address: address }, ETH.balance);
   ethTotalInGauge.set({ address: address }, ETH.totalIn);
   ethTotalOutGauge.set({ address: address }, ETH.totalOut);
+  txnTotalGauge.set({ address: address }, countTxs);
 
   console.log(JSON.stringify(ethTotalOutGauge.get()));
 }
