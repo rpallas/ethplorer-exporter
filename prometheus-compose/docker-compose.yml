@@ -26,6 +26,8 @@ services:
     volumes:
       - ./init.sh:/opt/init.sh
   ethplorer-exporter:
+    environment:
+      - ETHPLORER_EXPORTER_ADDRESS=${ETHPLORER_EXPORTER_ADDRESS}
     image: rpallas/ethplorer-exporter:latest
     # build: ../
   coinmarketcap-exporter:
