@@ -54,5 +54,6 @@ docker-compose up
 
 # Links
 
-- ethplorer API link - <https://api.ethplorer.io>
+- ethplorer API - <https://api.ethplorer.io>
+- ethplorer API docs - https://github.com/EverexIO/Ethplorer/wiki/Ethplorer-API
 - Prometheus exporters - <https://prometheus.io/docs/instrumenting/writing_exporters/>
