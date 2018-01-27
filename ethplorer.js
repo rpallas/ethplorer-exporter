@@ -36,6 +36,8 @@ function accountMetrics(response) {
   ethTotalOutGauge.set({ address: address }, ETH.totalOut);
   txnTotalGauge.set({ address: address }, countTxs);
   tokenBalanceGauge.set({ address: address }, tokens.reduce(tokenBalanceReducer, 0));
+
+  console.log(`${new Date().toISOString()} - accountMetrics collected`);
 }
 
 function tokenBalanceReducer (acc, token) {
