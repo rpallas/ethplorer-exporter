@@ -8,7 +8,7 @@
     "start": "node ethplorer"
   },
   "keywords": [ "prometheus", "crypto", "ethplorer", "ethereum" ],
-  "author": "",
+  "author": "rpallas@gmail.com",
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.2",
