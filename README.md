@@ -4,6 +4,12 @@ A prometheus exporter for <https://api.ethplorer.io>. Provides Prometheus metric
 
 # Developing
 
+- Set the address of the ethereum account in `.env`:
+
+```
+ETHPLORER_EXPORTER_ADDRESS=your-address-here
+```
+
 - Build the image:
 
 ```
@@ -29,6 +35,12 @@ npm start
 ```
 
 # Prometheus Compose
+
+- Set the address of the ethereum account in `.env`:
+
+```
+ETHPLORER_EXPORTER_ADDRESS=your-address-here
+```
 
 - In the `prometheus-compose` directory, run:
 
