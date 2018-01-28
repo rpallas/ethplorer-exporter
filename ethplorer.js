@@ -34,15 +34,20 @@ function accountMetrics(response) {
   ethTotalInGauge.set({ address: address }, ETH.totalIn);
   ethTotalOutGauge.set({ address: address }, ETH.totalOut);
   txnTotalGauge.set({ address: address }, countTxs);
-  tokenBalanceGauge.set({ address: address }, tokens.reduce(tokenBalanceReducer, 0));
+
+  let overallTokenBalanceUSD = 0;
+  tokens.forEach(token => {
+    const symbol = token.tokenInfo.symbol;
+    const tokenBalanceUSD = token.tokenInfo.price ? (Number(token.balance) * token.tokenInfo.price.rate) / Number(`1e${token.tokenInfo.decimals}`) : 0;
+    overallTokenBalanceUSD += tokenBalanceUSD;
+    new Gauge({ name: `ethplorer_account_token_${symbol}_balance`, help: `Balance of ${symbol} for account`, labelNames: ['address', 'symbol'] })
+      .set({ address: address, symbol: symbol }, token.balance);
+    new Gauge({ name: `ethplorer_account_token_${symbol}_balance_usd`, help: `Balance of ${symbol} in USD for account`, labelNames: ['address', 'symbol'] })
+      .set({ address: address, symbol: symbol }, tokenBalanceUSD);
+  });
+  tokenBalanceGauge.set({ address: address }, overallTokenBalanceUSD);
 
   console.log(`${new Date().toISOString()} - accountMetrics collected`);
-}
-
-function tokenBalanceReducer (acc, token) {
-  return acc += token.tokenInfo.price
-    ? (Number(token.balance) * token.tokenInfo.price.rate) / Number(`1e${token.tokenInfo.decimals}`)
-    : 0;
 }
 
 server.get('/metrics', (req, res) => {
