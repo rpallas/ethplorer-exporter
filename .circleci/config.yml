@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - checkout
-      - run: echo "A first hello"
+
       # Download and cache dependencies
       - restore_cache:
           keys:
@@ -33,3 +33,8 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
+      - setup_remote_docker
+      - run: |
+         docker login -u $DOCKER_USER -p $DOCKER_PASS
+         docker build -t rpallas/ethplorer-exporter:latest .
+         docker push rpallas/ethplorer-exporter:latest
