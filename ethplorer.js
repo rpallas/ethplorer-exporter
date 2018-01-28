@@ -6,13 +6,12 @@ const pkg = require('./package.json');
 const address = process.env.ETHPLORER_EXPORTER_ADDRESS || '';
 
 async function collect() {
+  const requestOptions = {
+    json: true,
+    headers: { 'user-agent': `ethplorer-exporter/${pkg.version}` }
+  };
   try {
-    options = {
-      json: true,
-      headers: { 'user-agent': `ethplorer-exporter/${pkg.version}` }
-    };
-    const response = await got(`https://api.ethplorer.io/getAddressInfo/${address}?apiKey=freekey`, options);
-    return response;
+    return await got(`https://api.ethplorer.io/getAddressInfo/${address}?apiKey=freekey`, requestOptions);
   } catch (error) {
     console.log(`Ethplorer api request error: ${error}`);
   }
