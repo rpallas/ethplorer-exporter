@@ -14,7 +14,7 @@ async function collect() {
     const response = await got(`https://api.ethplorer.io/getAddressInfo/${address}?apiKey=freekey`, options);
     return response;
   } catch (error) {
-    console.log(`Error: ${error}`);
+    console.log(`Ethplorer api request error: ${error}`);
   }
 }
 
