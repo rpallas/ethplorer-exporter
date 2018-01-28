@@ -22,9 +22,10 @@ const ethTotalInGauge = gauge('eth_totalIn', 'Total either transferred into acco
 const ethTotalOutGauge = gauge('eth_totalOut', 'Total either transferred out of account');
 const txnTotalGauge = gauge('txn_total', 'Total number of transactons for account');
 const tokenBalanceGauge = gauge('token_balance_usd', 'Overall token balance for account');
+const tokenGauges = {};
 
-function gauge(name, help) {
-  return new Gauge({ name: `ethplorer_account_${name}`, help: help, labelNames: ['address'] })
+function gauge(name, help, labels=['address']) {
+  return new Gauge({ name: `ethplorer_account_${name}`, help: help, labelNames: labels })
 }
 
 function accountMetrics(response) {
@@ -40,10 +41,15 @@ function accountMetrics(response) {
     const symbol = token.tokenInfo.symbol;
     const tokenBalanceUSD = token.tokenInfo.price ? (Number(token.balance) * token.tokenInfo.price.rate) / Number(`1e${token.tokenInfo.decimals}`) : 0;
     overallTokenBalanceUSD += tokenBalanceUSD;
-    new Gauge({ name: `ethplorer_account_token_${symbol}_balance`, help: `Balance of ${symbol} for account`, labelNames: ['address', 'symbol'] })
-      .set({ address: address, symbol: symbol }, token.balance);
-    new Gauge({ name: `ethplorer_account_token_${symbol}_balance_usd`, help: `Balance of ${symbol} in USD for account`, labelNames: ['address', 'symbol'] })
-      .set({ address: address, symbol: symbol }, tokenBalanceUSD);
+    const tokenBalanceName = `token_${symbol}_balance`;
+    if (!tokenGauges[tokenBalanceName]) {
+      tokenGauges[tokenBalanceName] = gauge(tokenBalanceName, `Balance of ${symbol} for account`, ['address', 'symbol']);
+    }
+    tokenGauges[tokenBalanceName].set({ address: address, symbol: symbol }, token.balance);
+    if (!tokenGauges[`${tokenBalanceName}_usd`]) {
+      tokenGauges[`${tokenBalanceName}_usd`] = gauge(`${tokenBalanceName}_usd`, `Balance of ${symbol} in USD for account`, ['address', 'symbol']);
+    }
+    tokenGauges[`${tokenBalanceName}_usd`].set({ address: address, symbol: symbol }, tokenBalanceUSD);
   });
   tokenBalanceGauge.set({ address: address }, overallTokenBalanceUSD);
 
