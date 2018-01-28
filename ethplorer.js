@@ -45,7 +45,6 @@ function accountMetrics(response) {
     if (!tokenGauges[tokenBalanceName]) {
       tokenGauges[tokenBalanceName] = gauge(tokenBalanceName, `Balance of ${symbol} for account`, ['address', 'symbol']);
     }
-    console.log(`${symbol}_balance: `, Number(token.balance) / Number(`1e${token.tokenInfo.decimals}`));
     tokenGauges[tokenBalanceName].set({ address: address, symbol: symbol }, Number(token.balance) / Number(`1e${token.tokenInfo.decimals}`));
     if (!tokenGauges[`${tokenBalanceName}_usd`]) {
       tokenGauges[`${tokenBalanceName}_usd`] = gauge(`${tokenBalanceName}_usd`, `Balance of ${symbol} in USD for account`, ['address', 'symbol']);
